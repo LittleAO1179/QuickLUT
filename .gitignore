@@ -1,0 +1,28 @@
+# Xcode
+*.xcworkspace
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.moved-aside
+DerivedData/
+build/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+*.xcconfig
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Generated files
+gen_project.py
+
+# macOS
+.DS_Store
+*.swp
+
+# App
+*.app

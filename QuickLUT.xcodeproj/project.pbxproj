@@ -1,0 +1,379 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		11B53EA8001DAFC851F2C6F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C55546A954643CE58B2E73; };
+		B3F45745EC523B279BE26190 /* ColorBalanceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6784B27D75070F8C4D33FF; };
+		7417BC0258AEC639BD3A9BA4 /* FFmpegLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C8C177E086FAB373DC416D; };
+		AE421B7063BF7EB09BB7E258 /* FilterChainBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA8947F3E34477416D58B7; };
+		487C227BF83D9C993DA00040 /* ProgressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C240ECA443F4B318CDA35DD6; };
+		10AE47C6093F791CA1B17B2A /* VideoProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD348E95AD6D6C9AFF0744D; };
+		A4CBC412C5475C8CA314D101 /* CurvePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CE72406FBEE4008D48D5F9; };
+		A865B69734DA3923662A4719 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E619EC96A0BC20CB79E39; };
+		F2F242B0A8A165A17761E168 /* ProcessingJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A810650185E2199BD37C768; };
+		7266B37B8B536EAF68DCA46C /* ProcessingParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3A1E49E78C5ABEEB638ABAC; };
+		70678E713DFA7D218B5DBFF5 /* QuickLUTApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD6962717B78B65CA834C16; };
+		5FD8ABF49F9FDBB1E116B052 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE70732F765A7C25A7A8923; };
+		B1AB54F7DB36DC177F93C4A0 /* PresetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABFE6620D32B2EE406722E; };
+		1AE24BCAA9E6224A37B0EF60 /* BasicAdjustmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774F6799AA6B6B37FC2A893F; };
+		B5C2338517F9E531CD99D025 /* ColorBalanceGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7446C4B994BBA2EE0F5F3E; };
+		56220ED766D1BD7590811070 /* CurvePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96762448EC4FA0460CD33113; };
+		B7E9D4AE7FA0B8BC911289BF /* DropZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985D127C334692132123E74D; };
+		C0787DABE0A0D286F21D0415 /* EncodingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A2AE2EC38882BCFB99864F; };
+		5BF49FEF1A4178323922B45B /* LUTPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6B9797F011DCB845674647; };
+		8D49EB33B6A36528705CF3CF /* PopoverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ADE413B54910D17F098F78; };
+		C76AB8D0711BB554946DFF80 /* PresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB475736BF8C836D7ABB7A4; };
+		0BAE089D37BA861E0438FAC5 /* BuiltInPresets.json in Resources */ = {isa = PBXBuildFile; fileRef = EB139D82BC2491E151A62BAC; };
+		0D9956DC9F508A023065C7E4 /* DJI_DLogM_to_Rec709.cube in Resources */ = {isa = PBXBuildFile; fileRef = FE679362589A50DE8411A97B; };
+		9B796E4658EB6732C4E43E93 /* DJI_DLog_to_Rec709_vivid.cube in Resources */ = {isa = PBXBuildFile; fileRef = C0CC1A754CE271972811F0C4; };
+		9657D47C085CBAFEE5C5ABFF /* iPhone_2020_to_709_33.cube in Resources */ = {isa = PBXBuildFile; fileRef = DF54116B6F42C2B4CDF8FB5E; };
+		210E3359E1D15DCED934FF79 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2E832810DD94AD7A5FA8C4A; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		21C55546A954643CE58B2E73 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate.swift"; sourceTree = "<group>"; };
+		DE6784B27D75070F8C4D33FF /* ColorBalanceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorBalanceBuilder.swift"; sourceTree = "<group>"; };
+		33C8C177E086FAB373DC416D /* FFmpegLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFmpegLocator.swift"; sourceTree = "<group>"; };
+		E1EA8947F3E34477416D58B7 /* FilterChainBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterChainBuilder.swift"; sourceTree = "<group>"; };
+		C240ECA443F4B318CDA35DD6 /* ProgressParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProgressParser.swift"; sourceTree = "<group>"; };
+		EBD348E95AD6D6C9AFF0744D /* VideoProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoProcessor.swift"; sourceTree = "<group>"; };
+		D8CE72406FBEE4008D48D5F9 /* CurvePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurvePreset.swift"; sourceTree = "<group>"; };
+		602E619EC96A0BC20CB79E39 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preset.swift"; sourceTree = "<group>"; };
+		2A810650185E2199BD37C768 /* ProcessingJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessingJob.swift"; sourceTree = "<group>"; };
+		F3A1E49E78C5ABEEB638ABAC /* ProcessingParams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProcessingParams.swift"; sourceTree = "<group>"; };
+		0DD6962717B78B65CA834C16 /* QuickLUTApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "QuickLUTApp.swift"; sourceTree = "<group>"; };
+		2AE70732F765A7C25A7A8923 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel.swift"; sourceTree = "<group>"; };
+		27ABFE6620D32B2EE406722E /* PresetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PresetStore.swift"; sourceTree = "<group>"; };
+		774F6799AA6B6B37FC2A893F /* BasicAdjustmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BasicAdjustmentsView.swift"; sourceTree = "<group>"; };
+		8B7446C4B994BBA2EE0F5F3E /* ColorBalanceGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorBalanceGroupView.swift"; sourceTree = "<group>"; };
+		96762448EC4FA0460CD33113 /* CurvePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurvePickerView.swift"; sourceTree = "<group>"; };
+		985D127C334692132123E74D /* DropZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DropZoneView.swift"; sourceTree = "<group>"; };
+		D2A2AE2EC38882BCFB99864F /* EncodingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EncodingProgressView.swift"; sourceTree = "<group>"; };
+		EE6B9797F011DCB845674647 /* LUTPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LUTPickerView.swift"; sourceTree = "<group>"; };
+		D7ADE413B54910D17F098F78 /* PopoverContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopoverContentView.swift"; sourceTree = "<group>"; };
+		6DB475736BF8C836D7ABB7A4 /* PresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PresetsView.swift"; sourceTree = "<group>"; };
+		EB139D82BC2491E151A62BAC /* BuiltInPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "BuiltInPresets.json"; sourceTree = "<group>"; };
+		FE679362589A50DE8411A97B /* DJI_DLogM_to_Rec709.cube */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DJI_DLogM_to_Rec709.cube"; sourceTree = "<group>"; };
+		C0CC1A754CE271972811F0C4 /* DJI_DLog_to_Rec709_vivid.cube */ = {isa = PBXFileReference; lastKnownFileType = file; path = "DJI_DLog_to_Rec709_vivid.cube"; sourceTree = "<group>"; };
+		DF54116B6F42C2B4CDF8FB5E /* iPhone_2020_to_709_33.cube */ = {isa = PBXFileReference; lastKnownFileType = file; path = "iPhone_2020_to_709_33.cube"; sourceTree = "<group>"; };
+		C2E832810DD94AD7A5FA8C4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info.plist"; sourceTree = "<group>"; };
+		32BB636196F91ED59D7A4919 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Assets.xcassets"; sourceTree = "<group>"; };
+		A97C29AD63741CF438998CE6 /* QuickLUT.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "QuickLUT.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		5928955287B8089ED2177128 = {
+			isa = PBXGroup;
+			children = (
+				1849FC21AAEE98122148FC2B /* QuickLUT */,
+				86024CAD1E83101D97359D73 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1849FC21AAEE98122148FC2B = {
+			isa = PBXGroup;
+			children = (
+				0DD6962717B78B65CA834C16 /* QuickLUTApp.swift */,
+				21C55546A954643CE58B2E73 /* AppDelegate.swift */,
+				AC5552FD6A3C08AD22387EFB /* Models */,
+				AD1943A9FD6D3D7EE1E6AF41 /* Engine */,
+				686C821A80914AEF822465B4 /* ViewModels */,
+				59A14A5786FE7A105D780BB1 /* Views */,
+				9B207167E5381C47682C6B4F /* Resources */,
+				60362549EBDB3B8D3046E288 /* LUTs */,
+				C2E832810DD94AD7A5FA8C4A /* Info.plist */,
+				32BB636196F91ED59D7A4919 /* Assets.xcassets */,
+			);
+			path = QuickLUT;
+			sourceTree = "<group>";
+		};
+		AC5552FD6A3C08AD22387EFB = {
+			isa = PBXGroup;
+			children = (
+				D8CE72406FBEE4008D48D5F9 /* CurvePreset.swift */,
+				602E619EC96A0BC20CB79E39 /* Preset.swift */,
+				2A810650185E2199BD37C768 /* ProcessingJob.swift */,
+				F3A1E49E78C5ABEEB638ABAC /* ProcessingParams.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		AD1943A9FD6D3D7EE1E6AF41 = {
+			isa = PBXGroup;
+			children = (
+				DE6784B27D75070F8C4D33FF /* ColorBalanceBuilder.swift */,
+				33C8C177E086FAB373DC416D /* FFmpegLocator.swift */,
+				E1EA8947F3E34477416D58B7 /* FilterChainBuilder.swift */,
+				C240ECA443F4B318CDA35DD6 /* ProgressParser.swift */,
+				EBD348E95AD6D6C9AFF0744D /* VideoProcessor.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		686C821A80914AEF822465B4 = {
+			isa = PBXGroup;
+			children = (
+				2AE70732F765A7C25A7A8923 /* AppViewModel.swift */,
+				27ABFE6620D32B2EE406722E /* PresetStore.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		59A14A5786FE7A105D780BB1 = {
+			isa = PBXGroup;
+			children = (
+				774F6799AA6B6B37FC2A893F /* BasicAdjustmentsView.swift */,
+				8B7446C4B994BBA2EE0F5F3E /* ColorBalanceGroupView.swift */,
+				96762448EC4FA0460CD33113 /* CurvePickerView.swift */,
+				985D127C334692132123E74D /* DropZoneView.swift */,
+				D2A2AE2EC38882BCFB99864F /* EncodingProgressView.swift */,
+				EE6B9797F011DCB845674647 /* LUTPickerView.swift */,
+				D7ADE413B54910D17F098F78 /* PopoverContentView.swift */,
+				6DB475736BF8C836D7ABB7A4 /* PresetsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		9B207167E5381C47682C6B4F = {
+			isa = PBXGroup;
+			children = (
+				EB139D82BC2491E151A62BAC /* BuiltInPresets.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		60362549EBDB3B8D3046E288 = {
+			isa = PBXGroup;
+			children = (
+				FE679362589A50DE8411A97B /* DJI_DLogM_to_Rec709.cube */,
+				C0CC1A754CE271972811F0C4 /* DJI_DLog_to_Rec709_vivid.cube */,
+				DF54116B6F42C2B4CDF8FB5E /* iPhone_2020_to_709_33.cube */,
+			);
+			path = LUTs;
+			sourceTree = "<group>";
+		};
+		86024CAD1E83101D97359D73 = {
+			isa = PBXGroup;
+			children = (
+				A97C29AD63741CF438998CE6 /* QuickLUT.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		42AEFBAE01D2DFD981F7DA7D /* QuickLUT */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F707ED8CFBC457F7F618ECA6;
+			buildPhases = (
+				E7209FB05162B7572F88D05E /* Sources */,
+				66F8606E9F0A136E2228EBCB /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = QuickLUT;
+			productName = QuickLUT;
+			productReference = A97C29AD63741CF438998CE6;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		46F86FAA6BBF9AC94A7E4595 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+			};
+			buildConfigurationList = CB7CBE0C3B42E7D081FECC31;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+				"zh-Hans",
+			);
+			mainGroup = 5928955287B8089ED2177128;
+			productRefGroup = 86024CAD1E83101D97359D73;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				42AEFBAE01D2DFD981F7DA7D /* QuickLUT */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E7209FB05162B7572F88D05E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				11B53EA8001DAFC851F2C6F0,
+				B3F45745EC523B279BE26190,
+				7417BC0258AEC639BD3A9BA4,
+				AE421B7063BF7EB09BB7E258,
+				487C227BF83D9C993DA00040,
+				10AE47C6093F791CA1B17B2A,
+				A4CBC412C5475C8CA314D101,
+				A865B69734DA3923662A4719,
+				F2F242B0A8A165A17761E168,
+				7266B37B8B536EAF68DCA46C,
+				70678E713DFA7D218B5DBFF5,
+				5FD8ABF49F9FDBB1E116B052,
+				B1AB54F7DB36DC177F93C4A0,
+				1AE24BCAA9E6224A37B0EF60,
+				B5C2338517F9E531CD99D025,
+				56220ED766D1BD7590811070,
+				B7E9D4AE7FA0B8BC911289BF,
+				C0787DABE0A0D286F21D0415,
+				5BF49FEF1A4178323922B45B,
+				8D49EB33B6A36528705CF3CF,
+				C76AB8D0711BB554946DFF80,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXResourcesBuildPhase section */
+		66F8606E9F0A136E2228EBCB /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BAE089D37BA861E0438FAC5,
+				0D9956DC9F508A023065C7E4,
+				9B796E4658EB6732C4E43E93,
+				9657D47C085CBAFEE5C5ABFF,
+				210E3359E1D15DCED934FF79,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		71307F56FE0F050CBFE8BD6D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		D4147F9DEB4AD84BF3A14790 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+			};
+			name = Release;
+		};
+		683105B965893FCC643C4ECF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = QuickLUT/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quicklut.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		4DC7B479A29173674AFD7BAC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = QuickLUT/Info.plist;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.quicklut.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CB7CBE0C3B42E7D081FECC31 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				71307F56FE0F050CBFE8BD6D /* Debug */,
+				D4147F9DEB4AD84BF3A14790 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F707ED8CFBC457F7F618ECA6 = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				683105B965893FCC643C4ECF /* Debug */,
+				4DC7B479A29173674AFD7BAC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 46F86FAA6BBF9AC94A7E4595 /* Project object */;
+}

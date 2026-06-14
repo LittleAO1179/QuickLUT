@@ -1,0 +1,82 @@
+[
+  {
+    "name": "暖调电影-轻分色",
+    "params": {
+      "preCurve": "film_light",
+      "lutStrength": 92,
+      "temperature": 0.06,
+      "tint": 0.08,
+      "shadow_temp": -0.20,
+      "highlight_temp": 0.25,
+      "saturation": 1.0,
+      "contrast": 1.04,
+      "brightness": 0.0,
+      "gamma": 1.01,
+      "lut_file": "DJI_DLog_to_Rec709_vivid.cube"
+    }
+  },
+  {
+    "name": "经典青橙-标准电影感",
+    "params": {
+      "preCurve": "film_medium",
+      "lutStrength": 92,
+      "temperature": 0.04,
+      "tint": 0.10,
+      "shadow_temp": -0.40,
+      "highlight_temp": 0.40,
+      "saturation": 1.0,
+      "contrast": 1.05,
+      "brightness": 0.0,
+      "gamma": 1.0,
+      "lut_file": "DJI_DLog_to_Rec709_vivid.cube"
+    }
+  },
+  {
+    "name": "强烈青橙-好莱坞风格",
+    "params": {
+      "preCurve": "film_medium",
+      "lutStrength": 93,
+      "temperature": 0.05,
+      "tint": 0.10,
+      "shadow_temp": -0.50,
+      "highlight_temp": 0.50,
+      "saturation": 1.02,
+      "contrast": 1.06,
+      "brightness": 0.0,
+      "gamma": 1.0,
+      "lut_file": "DJI_DLog_to_Rec709_vivid.cube"
+    }
+  },
+  {
+    "name": "柔和青橙-日系电影",
+    "params": {
+      "preCurve": "film_light",
+      "lutStrength": 90,
+      "temperature": 0.03,
+      "tint": 0.08,
+      "shadow_temp": -0.30,
+      "highlight_temp": 0.30,
+      "saturation": 0.95,
+      "contrast": 1.03,
+      "brightness": 0.0,
+      "gamma": 1.01,
+      "lut_file": "DJI_DLog_to_Rec709_vivid.cube"
+    }
+  },
+  {
+    "name": "暗调电影-深沉质感",
+    "params": {
+      "preCurve": "film_strong",
+      "lutStrength": 90,
+      "temperature": 0.03,
+      "tint": 0.10,
+      "shadow_temp": -0.35,
+      "highlight_temp": 0.35,
+      "saturation": 0.98,
+      "contrast": 1.05,
+      "brightness": -0.02,
+      "gamma": 0.98,
+      "lut_file": "DJI_DLog_to_Rec709_vivid.cube"
+    }
+  }
+]
