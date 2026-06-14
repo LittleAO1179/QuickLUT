@@ -6,6 +6,7 @@ import UniformTypeIdentifiers
 
 final class DropStatusBarView: NSView {
     var onClick: (() -> Void)?
+    var onRightClick: (() -> Void)?
     var onDropFile: ((URL) -> Void)?
 
     private let imageView = NSImageView()
@@ -45,6 +46,10 @@ final class DropStatusBarView: NSView {
 
     override func mouseDown(with event: NSEvent) {
         onClick?()
+    }
+
+    override func rightMouseDown(with event: NSEvent) {
+        onRightClick?()
     }
 
     // MARK: - 拖放
@@ -129,6 +134,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         dropView = DropStatusBarView(frame: NSRect(x: 0, y: 0, width: 26, height: 22))
         dropView.onClick = { [weak self] in self?.togglePopover() }
+        dropView.onRightClick = { [weak self] in self?.showStatusBarMenu() }
         dropView.onDropFile = { [weak self] url in
             self?.viewModel.selectFile(url)
             self?.showPopover()
@@ -184,5 +190,68 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         guard let view = statusItem.view, !popover.isShown else { return }
         popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
+    }
+
+    // MARK: - 右键菜单
+
+    private func showStatusBarMenu() {
+        let menu = buildStatusBarMenu()
+        // 在状态栏图标位置弹出菜单
+        let location = dropView.bounds.origin
+        menu.popUp(
+            positioning: nil,
+            at: NSPoint(x: location.x, y: location.y - 2),
+            in: dropView
+        )
+    }
+
+    /// 构建右键菜单（便于后续扩展，在这里添加新菜单项即可）
+    private func buildStatusBarMenu() -> NSMenu {
+        let menu = NSMenu()
+        menu.autoenablesItems = true
+
+        // --- 功能菜单项区域（在此之上添加新功能） ---
+
+        // 分隔线
+        menu.addItem(NSMenuItem.separator())
+
+        // --- 应用操作区域 ---
+
+        // 首选项（占位，后续 feature/settings-ui 实现）
+        let prefsItem = NSMenuItem(
+            title: "首选项...",
+            action: #selector(openPreferences),
+            keyEquivalent: ","
+        )
+        prefsItem.target = self
+        menu.addItem(prefsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 退出应用（红色）
+        let quitItem = NSMenuItem(
+            title: "退出 QuickLUT",
+            action: #selector(quitApp),
+            keyEquivalent: "q"
+        )
+        quitItem.target = self
+        // 红色菜单项
+        let quitTitle = NSAttributedString(
+            string: "退出 QuickLUT",
+            attributes: [.foregroundColor: NSColor.systemRed]
+        )
+        quitItem.attributedTitle = quitTitle
+        menu.addItem(quitItem)
+
+        return menu
+    }
+
+    @objc private func openPreferences() {
+        // 后续 feature/settings-ui 实现
+        NSApp.activate(ignoringOtherApps: true)
+    }
+
+    @objc private func quitApp() {
+        NSApplication.shared.terminate(nil)
     }
 }
