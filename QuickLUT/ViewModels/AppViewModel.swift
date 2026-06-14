@@ -53,9 +53,10 @@ final class AppViewModel: ObservableObject {
 
     func generatePreview() {
         guard let input = selectedFileURL, !isGeneratingPreview else { return }
-
-        guard let lutDir = Bundle.main.resourceURL?.appendingPathComponent("LUTs") else { return }
-        let lutFileURL = lutDir.appendingPathComponent(params.lutFileName)
+        guard let lutFileURL = VideoProcessor.resolveLUTFile(named: params.lutFileName) else {
+            previewImageURL = nil
+            return
+        }
 
         isGeneratingPreview = true
         previewImageURL = nil
@@ -80,11 +81,10 @@ final class AppViewModel: ObservableObject {
         guard let input = selectedFileURL, let output = outputURL,
               !job.status.isActive else { return }
 
-        guard let lutDir = Bundle.main.resourceURL?.appendingPathComponent("LUTs") else {
-            job.status = .failed(error: "找不到 LUT 资源目录")
+        guard let lutFileURL = VideoProcessor.resolveLUTFile(named: params.lutFileName) else {
+            job.status = .failed(error: "找不到 LUT 文件：\(params.lutFileName)")
             return
         }
-        let lutFileURL = lutDir.appendingPathComponent(params.lutFileName)
 
         Task {
             await videoProcessor.process(inputURL: input, outputURL: output, params: params, lutFileURL: lutFileURL)
