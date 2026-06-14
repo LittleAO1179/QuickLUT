@@ -135,13 +135,38 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         statusItem.view = dropView
 
-        // 创建 Popover
+        // 创建 Popover（applicationDefined 模式：不自动关闭，手动管理）
         popover = NSPopover()
         popover.contentSize = NSSize(width: 360, height: 560)
-        popover.behavior = .transient
+        popover.behavior = .applicationDefined
         popover.contentViewController = NSHostingController(
             rootView: PopoverContentView().environmentObject(viewModel)
         )
+
+        // 监听鼠标点击：点击 popover 窗口外部时关闭
+        NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
+            guard let self = self,
+                  self.popover.isShown,
+                  let popoverWindow = self.popover.contentViewController?.view.window,
+                  let dropView = self.dropView else {
+                return event
+            }
+            // 不关闭的情况：点击 popover 内部 或 点击状态栏图标
+            if event.window === popoverWindow { return event }
+            let pointInDropView = dropView.convert(event.locationInWindow, from: nil)
+            if dropView.bounds.contains(pointInDropView) { return event }
+
+            self.popover.performClose(nil)
+            return event
+        }
+
+        // 监听 Esc 键关闭
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            guard let self = self, self.popover.isShown,
+                  event.keyCode == 53 else { return event }
+            self.popover.performClose(nil)
+            return nil
+        }
     }
 
     @objc private func togglePopover() {
