@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import Combine
 
 /// 顶层 ViewModel，连接 UI、Engine 和 PresetStore
 @MainActor
@@ -18,6 +19,17 @@ final class AppViewModel: ObservableObject {
 
     let videoProcessor = VideoProcessor()
     let presetStore = PresetStore()
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        // 同步 VideoProcessor 的 job 到 AppViewModel
+        videoProcessor.$job
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] newJob in
+                self?.job = newJob
+            }
+            .store(in: &cancellables)
+    }
 
     private var previewDir: URL {
         FileManager.default.temporaryDirectory.appendingPathComponent("QuickLUT/previews", isDirectory: true)
@@ -86,15 +98,16 @@ final class AppViewModel: ObservableObject {
             return
         }
 
-        Task {
-            await videoProcessor.process(inputURL: input, outputURL: output, params: params, lutFileURL: lutFileURL)
-            self.job = videoProcessor.job
-        }
+        let filterComplex = FilterChainBuilder.build(params: params, lutFilePath: lutFileURL.path)
+        videoProcessor.startEncoding(
+            inputURL: input,
+            outputURL: output,
+            filterComplex: filterComplex
+        )
     }
 
     func cancelEncoding() {
         videoProcessor.cancel()
-        job = videoProcessor.job
     }
 
     // MARK: - 预设

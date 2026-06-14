@@ -1,14 +1,11 @@
 import Foundation
 
-/// 管理 ffmpeg 视频处理进程
+/// 管理 ffmpeg 视频处理（UI 状态在主线程，ffmpeg 执行在后台）
 @MainActor
 final class VideoProcessor: ObservableObject {
 
     @Published var job = ProcessingJob()
     @Published var isProcessing = false
-
-    private var currentProcess: Process?
-    private var progressTask: Task<Void, Never>?
 
     /// 支持的视频文件扩展名
     static let supportedExtensions: Set<String> = [
@@ -17,17 +14,11 @@ final class VideoProcessor: ObservableObject {
 
     // MARK: - LUT 文件查找
 
-    /// 查找 LUT 文件，先查 bundle，再查当前工作目录
     static func resolveLUTFile(named lutFileName: String) -> URL? {
-        // 1. 先查 bundle Resources/LUTs/
         if let bundleDir = Bundle.main.resourceURL?.appendingPathComponent("LUTs") {
             let url = bundleDir.appendingPathComponent(lutFileName)
-            if FileManager.default.fileExists(atPath: url.path) {
-                return url
-            }
+            if FileManager.default.fileExists(atPath: url.path) { return url }
         }
-
-        // 2. 回退：项目源码目录（Xcode 开发时）
         let sourcePaths = [
             URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
                 .appendingPathComponent("QuickLUT/LUTs/\(lutFileName)"),
@@ -35,161 +26,136 @@ final class VideoProcessor: ObservableObject {
                 .appendingPathComponent("LUTs/\(lutFileName)"),
         ]
         for url in sourcePaths {
-            if FileManager.default.fileExists(atPath: url.path) {
-                return url
-            }
+            if FileManager.default.fileExists(atPath: url.path) { return url }
         }
-
-        // 3. LutAutoProcess 项目路径
         let altPath = URL(fileURLWithPath: NSHomeDirectory())
             .appendingPathComponent("Desktop/File/Projects/LutAutoProcess/luts/\(lutFileName)")
-        if FileManager.default.fileExists(atPath: altPath.path) {
-            return altPath
-        }
-
+        if FileManager.default.fileExists(atPath: altPath.path) { return altPath }
         return nil
     }
 
-    // MARK: - 执行 ffmpeg 命令（复用逻辑）
+    // MARK: - 后台执行 ffmpeg（非主线程）
 
-    private func runFFmpeg(arguments: [String]) async -> (exitCode: Int32, stderr: String) {
-        guard let ffmpegURL = FFmpegLocator.locate() else {
-            return (-1, "未找到 ffmpeg")
-        }
-
-        let process = Process()
-        process.executableURL = ffmpegURL
-        process.arguments = arguments
-
-        let stdoutPipe = Pipe()
-        let stderrPipe = Pipe()
-        process.standardOutput = stdoutPipe
-        process.standardError = stderrPipe
-        process.standardInput = FileHandle.nullDevice
-
-        do {
-            try process.run()
-            process.waitUntilExit()
-
-            let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-            let stderrStr = String(data: stderrData, encoding: .utf8) ?? ""
-
-            return (process.terminationStatus, stderrStr)
-        } catch {
-            return (-1, "启动 ffmpeg 失败: \(error.localizedDescription)")
-        }
-    }
-
-    // MARK: - Public API
-
-    /// 开始处理视频
-    func process(
+    /// 在后台线程执行 ffmpeg，通过回调报告进度和结果
+    func startEncoding(
         inputURL: URL,
         outputURL: URL,
-        params: ProcessingParams,
-        lutFileURL: URL
-    ) async {
+        filterComplex: String
+    ) {
         guard !isProcessing else { return }
         isProcessing = true
         job = ProcessingJob(url: inputURL)
         job.outputURL = outputURL
-
-        guard FFmpegLocator.isAvailable() else {
-            job.status = .failed(error: "未找到 ffmpeg。请使用 Homebrew 安装：brew install ffmpeg")
-            isProcessing = false
-            return
-        }
-
-        guard let ffprobeURL = FFmpegLocator.locateFFprobe() else {
-            job.status = .failed(error: "未找到 ffprobe。请确保 ffmpeg 安装完整")
-            isProcessing = false
-            return
-        }
-
-        guard FileManager.default.fileExists(atPath: lutFileURL.path) else {
-            job.status = .failed(error: "LUT 文件不存在：\(lutFileURL.path)")
-            isProcessing = false
-            return
-        }
-
-        // 获取视频时长
-        let durationMs: Int64
-        do {
-            job.status = .preparing
-            durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL, ffprobeURL: ffprobeURL)
-        } catch {
-            job.status = .failed(error: "无法读取视频文件：\(error.localizedDescription)")
-            isProcessing = false
-            return
-        }
-
-        // 构建 filter_complex
-        let filterComplex = FilterChainBuilder.build(params: params, lutFilePath: lutFileURL.path)
+        job.status = .preparing
 
         // 确保输出目录存在
-        let outputDir = outputURL.deletingLastPathComponent()
-        try? FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true)
+        try? FileManager.default.createDirectory(
+            at: outputURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
 
-        let arguments = [
-            "-i", inputURL.path,
-            "-filter_complex", filterComplex,
-            "-map", "[out]",
-            "-c:v", "hevc_videotoolbox",
-            "-pix_fmt", "yuv420p10le",
-            "-b:v", "20M", "-maxrate", "25M", "-bufsize", "25M",
-            "-c:a", "copy",
-            "-tag:v", "hvc1",
-            "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
-            "-movflags", "+faststart",
-            "-progress", "pipe:1", "-nostats", "-y",
-            outputURL.path
-        ]
+        // 在后台线程执行所有阻塞操作
+        Task.detached { [weak self] in
+            guard let self = self else { return }
 
-        job.status = .encoding(progress: 0)
-        currentProcess = Process()
-        currentProcess?.executableURL = FFmpegLocator.locate()
-        currentProcess?.arguments = arguments
-        let stderrPipe = Pipe()
-        currentProcess?.standardOutput = Pipe()
-        currentProcess?.standardError = stderrPipe
-        currentProcess?.standardInput = FileHandle.nullDevice
+            // 获取 ffmpeg 路径（在后台查，避免主线程 I/O）
+            guard let ffmpegURL = FFmpegLocator.locate(),
+                  let ffprobeURL = FFmpegLocator.locateFFprobe() else {
+                await self.fail("未找到 ffmpeg")
+                return
+            }
 
-        do {
-            try currentProcess?.run()
-            currentProcess?.waitUntilExit()
+            // 获取视频时长（后台 I/O）
+            let durationMs: Int64
+            do {
+                durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL, ffprobeURL: ffprobeURL)
+            } catch {
+                await self.fail("无法读取视频文件：\(error.localizedDescription)")
+                return
+            }
 
-            let exitCode = currentProcess?.terminationStatus ?? -1
+            // 更新状态：开始编码
+            await MainActor.run { self.job.status = .encoding(progress: 0) }
+
+            // 启动 ffmpeg
+            let process = Process()
+            process.executableURL = ffmpegURL
+            process.arguments = [
+                "-i", inputURL.path,
+                "-filter_complex", filterComplex,
+                "-map", "[out]",
+                "-c:v", "hevc_videotoolbox",
+                "-pix_fmt", "yuv420p10le",
+                "-b:v", "20M", "-maxrate", "25M", "-bufsize", "25M",
+                "-c:a", "copy",
+                "-tag:v", "hvc1",
+                "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709",
+                "-movflags", "+faststart",
+                "-progress", "pipe:1", "-nostats", "-y",
+                outputURL.path
+            ]
+            let stdoutPipe = Pipe()
+            let stderrPipe = Pipe()
+            process.standardOutput = stdoutPipe
+            process.standardError = stderrPipe
+            process.standardInput = FileHandle.nullDevice
+
+            do {
+                try process.run()
+            } catch {
+                await self.fail("启动 ffmpeg 失败：\(error.localizedDescription)")
+                return
+            }
+
+            // 后台读取进度（不阻塞，异步读取 stdout）
+            let progressTask = Task.detached {
+                for try await line in stdoutPipe.fileHandleForReading.bytes.lines {
+                    if Task.isCancelled { break }
+                    if let result = ProgressParser.parse(line: line, durationMs: durationMs),
+                       result.progress > 0 {
+                        await MainActor.run {
+                            if case .encoding = self.job.status {
+                                self.job.status = .encoding(progress: result.progress)
+                            }
+                        }
+                    }
+                }
+            }
+
+            // 阻塞等待完成（在后台线程，不阻塞 UI）
+            process.waitUntilExit()
+            progressTask.cancel()
+
+            let exitCode = process.terminationStatus
             if exitCode != 0 {
                 let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
                 let stderrStr = String(data: stderrData, encoding: .utf8) ?? ""
-                // 提取 stderr 最后几行（含关键错误信息）
                 let lines = stderrStr.components(separatedBy: "\n").filter { !$0.isEmpty }
                 let lastLines = lines.suffix(5).joined(separator: "\n")
-                job.status = .failed(error: "ffmpeg 编码失败 (exit \(exitCode)):\n\(lastLines)")
+                await self.fail("ffmpeg 编码失败 (exit \(exitCode)):\n\(lastLines)")
             } else {
-                job.status = .completed(outputPath: outputURL.path)
+                await MainActor.run {
+                    self.job.status = .completed(outputPath: outputURL.path)
+                    self.isProcessing = false
+                }
             }
-        } catch {
-            job.status = .failed(error: "启动 ffmpeg 失败：\(error.localizedDescription)")
         }
-
-        currentProcess = nil
-        isProcessing = false
     }
 
     /// 取消当前处理
     func cancel() {
-        currentProcess?.interrupt()
-        currentProcess?.terminate()
-        progressTask?.cancel()
+        isProcessing = false
         job.status = .cancelled
+    }
+
+    @MainActor
+    private func fail(_ msg: String) {
+        job.status = .failed(error: msg)
         isProcessing = false
     }
 
-    // MARK: - 预览
+    // MARK: - 预览（同样后台执行）
 
-    /// 生成视频中间帧的调色预览图
-    @MainActor
     func generatePreview(
         inputURL: URL,
         params: ProcessingParams,
@@ -197,52 +163,65 @@ final class VideoProcessor: ObservableObject {
         outputDir: URL
     ) async -> URL? {
         guard FFmpegLocator.isAvailable(),
-              FFmpegLocator.locateFFprobe() != nil else {
-            return nil
-        }
-
+              let ffprobeURL = FFmpegLocator.locateFFprobe() else { return nil }
         guard FileManager.default.fileExists(atPath: lutFileURL.path) else {
             print("[QuickLUT] LUT file not found: \(lutFileURL.path)")
             return nil
         }
 
-        let durationMs: Int64
-        do {
-            durationMs = try ProgressParser.getVideoDuration(
-                inputURL: inputURL,
-                ffprobeURL: FFmpegLocator.locateFFprobe()!
+        // 在后台线程执行 I/O
+        return await Task.detached {
+            let durationMs: Int64
+            do {
+                durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL, ffprobeURL: ffprobeURL)
+            } catch {
+                print("[QuickLUT] getVideoDuration failed: \(error)")
+                return nil as URL?
+            }
+
+            let midSeconds = Double(durationMs) / 2_000_000.0
+            let filterComplex = FilterChainBuilder.build(
+                params: params,
+                lutFilePath: lutFileURL.path,
+                scale: "640:-1"
             )
-        } catch {
-            print("[QuickLUT] getVideoDuration failed: \(error)")
-            return nil
-        }
+            let previewURL = outputDir.appendingPathComponent("preview.jpg")
+            try? FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true)
 
-        let midSeconds = Double(durationMs) / 2_000_000.0
-        let filterComplex = FilterChainBuilder.build(
-            params: params,
-            lutFilePath: lutFileURL.path,
-            scale: "640:-1"
-        )
-        let previewURL = outputDir.appendingPathComponent("preview.jpg")
+            guard let ffmpegURL = FFmpegLocator.locate() else { return nil as URL? }
 
-        try? FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true)
+            let process = Process()
+            process.executableURL = ffmpegURL
+            process.arguments = [
+                "-y",
+                "-ss", String(format: "%.2f", midSeconds),
+                "-i", inputURL.path,
+                "-filter_complex", filterComplex,
+                "-map", "[out]",
+                "-frames:v", "1",
+                "-q:v", "3",
+                previewURL.path
+            ]
+            process.standardOutput = Pipe()
+            let stderrPipe = Pipe()
+            process.standardError = stderrPipe
+            process.standardInput = FileHandle.nullDevice
 
-        let result = await runFFmpeg(arguments: [
-            "-y",
-            "-ss", String(format: "%.2f", midSeconds),
-            "-i", inputURL.path,
-            "-filter_complex", filterComplex,
-            "-map", "[out]",
-            "-frames:v", "1",
-            "-q:v", "3",
-            previewURL.path
-        ])
+            do {
+                try process.run()
+                process.waitUntilExit()
+            } catch {
+                return nil as URL?
+            }
 
-        if result.exitCode != 0 {
-            print("[QuickLUT] Preview ffmpeg failed: \(result.stderr)")
-            return nil
-        }
+            if process.terminationStatus != 0 {
+                let stderrData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
+                let stderrStr = String(data: stderrData, encoding: .utf8) ?? ""
+                print("[QuickLUT] Preview ffmpeg failed: \(stderrStr)")
+                return nil as URL?
+            }
 
-        return FileManager.default.fileExists(atPath: previewURL.path) ? previewURL : nil
+            return FileManager.default.fileExists(atPath: previewURL.path) ? previewURL : nil
+        }.value
     }
 }
