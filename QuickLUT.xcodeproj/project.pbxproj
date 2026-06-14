@@ -32,7 +32,6 @@
 		0D9956DC9F508A023065C7E4 /* DJI_DLogM_to_Rec709.cube in Resources */ = {isa = PBXBuildFile; fileRef = FE679362589A50DE8411A97B; };
 		9B796E4658EB6732C4E43E93 /* DJI_DLog_to_Rec709_vivid.cube in Resources */ = {isa = PBXBuildFile; fileRef = C0CC1A754CE271972811F0C4; };
 		9657D47C085CBAFEE5C5ABFF /* iPhone_2020_to_709_33.cube in Resources */ = {isa = PBXBuildFile; fileRef = DF54116B6F42C2B4CDF8FB5E; };
-		210E3359E1D15DCED934FF79 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C2E832810DD94AD7A5FA8C4A; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -253,7 +252,6 @@
 				0D9956DC9F508A023065C7E4,
 				9B796E4658EB6732C4E43E93,
 				9657D47C085CBAFEE5C5ABFF,
-				210E3359E1D15DCED934FF79,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,6 +52,18 @@ enum FFmpegLocator {
         return nil
     }
 
+    /// 从 ffmpeg 路径推导 ffprobe 路径
+    static func locateFFprobe() -> URL? {
+        guard let ffmpegURL = locate() else { return nil }
+        let ffprobeURL = ffmpegURL
+            .deletingLastPathComponent()
+            .appendingPathComponent("ffprobe")
+        if FileManager.default.isExecutableFile(atPath: ffprobeURL.path) {
+            return ffprobeURL
+        }
+        return nil
+    }
+
     /// 检查 ffmpeg 是否可用
     static func isAvailable() -> Bool {
         locate() != nil

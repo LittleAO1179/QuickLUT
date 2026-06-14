@@ -30,11 +30,11 @@ enum ProgressParser {
     }
 
     /// 获取视频时长（毫秒）— 通过 ffprobe
-    static func getVideoDuration(inputURL: URL) throws -> Int64 {
+    static func getVideoDuration(inputURL: URL, ffprobeURL: URL) throws -> Int64 {
         let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/env")
+        process.executableURL = ffprobeURL
         process.arguments = [
-            "ffprobe", "-v", "quiet", "-print_format", "json",
+            "-v", "quiet", "-print_format", "json",
             "-show_format", inputURL.path
         ]
         let pipe = Pipe()

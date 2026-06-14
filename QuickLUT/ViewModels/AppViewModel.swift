@@ -11,20 +11,27 @@ final class AppViewModel: ObservableObject {
     @Published var selectedFileURL: URL?
     @Published var outputURL: URL?
     @Published var job = ProcessingJob()
+    @Published var previewImageURL: URL?
+    @Published var isGeneratingPreview = false
 
     // MARK: - 子组件
 
     let videoProcessor = VideoProcessor()
     let presetStore = PresetStore()
 
+    private var previewDir: URL {
+        FileManager.default.temporaryDirectory.appendingPathComponent("QuickLUT/previews", isDirectory: true)
+    }
+
     // MARK: - 文件操作
 
-    /// 用户选择视频文件后调用
+    /// 用户选择视频文件后调用（拖放或文件选择器）
     func selectFile(_ url: URL) {
         guard VideoProcessor.supportedExtensions.contains(url.pathExtension.lowercased()) else {
             return
         }
         selectedFileURL = url
+        previewImageURL = nil
         computeOutputPath(for: url)
     }
 
@@ -40,6 +47,31 @@ final class AppViewModel: ObservableObject {
             counter += 1
         }
         outputURL = candidate
+    }
+
+    // MARK: - 预览
+
+    func generatePreview() {
+        guard let input = selectedFileURL, !isGeneratingPreview else { return }
+
+        guard let lutDir = Bundle.main.resourceURL?.appendingPathComponent("LUTs") else { return }
+        let lutFileURL = lutDir.appendingPathComponent(params.lutFileName)
+
+        isGeneratingPreview = true
+        previewImageURL = nil
+
+        Task {
+            let result = await videoProcessor.generatePreview(
+                inputURL: input,
+                params: params,
+                lutFileURL: lutFileURL,
+                outputDir: previewDir
+            )
+            await MainActor.run {
+                self.previewImageURL = result
+                self.isGeneratingPreview = false
+            }
+        }
     }
 
     // MARK: - 编码

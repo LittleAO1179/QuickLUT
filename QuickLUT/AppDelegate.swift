@@ -1,10 +1,116 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 
+// MARK: - 自定义可拖放的状态栏视图
+
+final class DropStatusBarView: NSView {
+    var onClick: (() -> Void)?
+    var onDropFile: ((URL) -> Void)?
+
+    private let imageView = NSImageView()
+    private let highlightLayer = CALayer()
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        setup()
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        setup()
+    }
+
+    private func setup() {
+        wantsLayer = true
+
+        // 高亮层
+        highlightLayer.frame = bounds
+        highlightLayer.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(0.3).cgColor
+        highlightLayer.opacity = 0
+        layer?.addSublayer(highlightLayer)
+
+        // 图标
+        imageView.image = NSImage(
+            systemSymbolName: "paintpalette.fill",
+            accessibilityDescription: "QuickLUT"
+        )
+        imageView.imageScaling = .scaleProportionallyDown
+        imageView.frame = NSRect(x: 2, y: 2, width: 20, height: 18)
+        addSubview(imageView)
+
+        // 注册拖放类型
+        registerForDraggedTypes([.fileURL])
+    }
+
+    override func mouseDown(with event: NSEvent) {
+        onClick?()
+    }
+
+    // MARK: - 拖放
+
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        guard hasVideoFile(sender) else { return [] }
+        highlightLayer.opacity = 1
+        return .copy
+    }
+
+    override func draggingExited(_ sender: NSDraggingInfo?) {
+        highlightLayer.opacity = 0
+    }
+
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        highlightLayer.opacity = 0
+        guard let url = extractFileURL(sender) else { return false }
+        onDropFile?(url)
+        return true
+    }
+
+    private func hasVideoFile(_ sender: NSDraggingInfo) -> Bool {
+        extractFileURL(sender) != nil
+    }
+
+    private func extractFileURL(_ sender: NSDraggingInfo) -> URL? {
+        let types: [UTType] = [.mpeg4Movie, .quickTimeMovie, .movie, .avi, .video]
+        let extensions = ["mp4", "mov", "mxf", "avi", "mkv", "webm", "m4v"]
+
+        guard let pasteboardItem = sender.draggingPasteboard.pasteboardItems?.first else {
+            return nil
+        }
+
+        // 尝试通过 UTType 获取
+        for type in types {
+            if let data = pasteboardItem.data(forType: NSPasteboard.PasteboardType(type.identifier)),
+               let path = String(data: data, encoding: .utf8) {
+                let url = URL(fileURLWithPath: path)
+                if extensions.contains(url.pathExtension.lowercased()) {
+                    return url
+                }
+            }
+        }
+
+        // 回退：直接从 fileURL 获取
+        if let data = pasteboardItem.data(forType: .fileURL),
+           let path = String(data: data, encoding: .utf8) {
+            let url = URL(fileURLWithPath: path)
+            if extensions.contains(url.pathExtension.lowercased()) {
+                return url
+            }
+        }
+
+        return nil
+    }
+}
+
+// MARK: - AppDelegate
+
+@MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var statusItem: NSStatusItem!
     private var popover: NSPopover!
+    private var dropView: DropStatusBarView!
+    let viewModel = AppViewModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 检查 ffmpeg
@@ -19,36 +125,39 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        // 创建状态栏图标
+        // 创建状态栏自定义视图
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-
-        if let button = statusItem.button {
-            button.image = NSImage(
-                systemSymbolName: "paintpalette.fill",
-                accessibilityDescription: "QuickLUT"
-            )
-            button.action = #selector(togglePopover)
-            button.target = self
+        dropView = DropStatusBarView(frame: NSRect(x: 0, y: 0, width: 26, height: 22))
+        dropView.onClick = { [weak self] in self?.togglePopover() }
+        dropView.onDropFile = { [weak self] url in
+            self?.viewModel.selectFile(url)
+            self?.showPopover()
         }
+        statusItem.view = dropView
 
         // 创建 Popover
         popover = NSPopover()
         popover.contentSize = NSSize(width: 360, height: 560)
         popover.behavior = .transient
         popover.contentViewController = NSHostingController(
-            rootView: PopoverContentView()
+            rootView: PopoverContentView().environmentObject(viewModel)
         )
     }
 
     @objc private func togglePopover() {
-        guard let button = statusItem.button else { return }
+        guard let view = statusItem.view else { return }
 
         if popover.isShown {
             popover.performClose(nil)
         } else {
-            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-            // 确保 popover 获得焦点
+            popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
         }
+    }
+
+    private func showPopover() {
+        guard let view = statusItem.view, !popover.isShown else { return }
+        popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+        popover.contentViewController?.view.window?.makeKey()
     }
 }

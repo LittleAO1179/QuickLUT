@@ -35,11 +35,17 @@ final class VideoProcessor: ObservableObject {
             return
         }
 
+        guard let ffprobeURL = FFmpegLocator.locateFFprobe() else {
+            job.status = .failed(error: "未找到 ffprobe。请确保 ffmpeg 安装完整")
+            isProcessing = false
+            return
+        }
+
         // 获取视频时长
         let durationMs: Int64
         do {
             job.status = .preparing
-            durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL)
+            durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL, ffprobeURL: ffprobeURL)
         } catch {
             job.status = .failed(error: "无法读取视频文件：\(error.localizedDescription)")
             isProcessing = false
@@ -126,5 +132,57 @@ final class VideoProcessor: ObservableObject {
         progressTask?.cancel()
         job.status = .cancelled
         isProcessing = false
+    }
+
+    // MARK: - 预览
+
+    /// 生成视频中间帧的调色预览图
+    @MainActor
+    func generatePreview(
+        inputURL: URL,
+        params: ProcessingParams,
+        lutFileURL: URL,
+        outputDir: URL
+    ) async -> URL? {
+        guard let ffmpegURL = FFmpegLocator.locate(),
+              let ffprobeURL = FFmpegLocator.locateFFprobe() else {
+            return nil
+        }
+
+        let durationMs: Int64
+        do {
+            durationMs = try ProgressParser.getVideoDuration(inputURL: inputURL, ffprobeURL: ffprobeURL)
+        } catch {
+            return nil
+        }
+
+        let midSeconds = Double(durationMs) / 2_000_000.0  // 取视频中点
+        let filterComplex = FilterChainBuilder.build(params: params, lutFilePath: lutFileURL.path, scale: "640:-1")
+        let previewURL = outputDir.appendingPathComponent("preview.jpg")
+
+        try? FileManager.default.createDirectory(at: outputDir, withIntermediateDirectories: true)
+
+        let process = Process()
+        process.executableURL = ffmpegURL
+        process.arguments = [
+            "-y",
+            "-ss", String(format: "%.2f", midSeconds),
+            "-i", inputURL.path,
+            "-filter_complex", filterComplex,
+            "-map", "[out]",
+            "-frames:v", "1",
+            "-q:v", "3",
+            previewURL.path
+        ]
+
+        do {
+            try process.run()
+            process.waitUntilExit()
+            if process.terminationStatus == 0, FileManager.default.fileExists(atPath: previewURL.path) {
+                return previewURL
+            }
+        } catch {}
+
+        return nil
     }
 }

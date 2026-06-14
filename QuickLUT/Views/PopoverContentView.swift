@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct PopoverContentView: View {
-    @StateObject private var viewModel = AppViewModel()
+    @EnvironmentObject var viewModel: AppViewModel
 
     var body: some View {
         ScrollView {
@@ -14,10 +14,17 @@ struct PopoverContentView: View {
                 ColorBalanceGroupView()
                 BasicAdjustmentsView()
 
+                // 预览按钮 + 预览图
+                if viewModel.selectedFileURL != nil {
+                    previewSection
+                }
+
+                // 编码状态
                 if !isIdle {
                     EncodingProgressView()
                 }
 
+                // 开始编码按钮
                 if isIdle || isTerminalState {
                     Button(action: viewModel.startEncoding) {
                         Text("开始编码")
@@ -33,6 +40,44 @@ struct PopoverContentView: View {
         .frame(width: 360)
         .frame(minHeight: 400, maxHeight: 600)
         .environmentObject(viewModel)
+    }
+
+    // MARK: - 预览区域
+
+    private var previewSection: some View {
+        VStack(spacing: 8) {
+            Button(action: viewModel.generatePreview) {
+                HStack(spacing: 4) {
+                    if viewModel.isGeneratingPreview {
+                        ProgressView()
+                            .scaleEffect(0.6)
+                            .frame(width: 12, height: 12)
+                    } else {
+                        Image(systemName: "eye")
+                            .font(.caption)
+                    }
+                    Text(viewModel.isGeneratingPreview ? "生成中..." : "预览效果")
+                        .font(.caption)
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.small)
+            .disabled(viewModel.isGeneratingPreview)
+
+            if let previewURL = viewModel.previewImageURL {
+                if let nsImage = NSImage(contentsOf: previewURL) {
+                    Image(nsImage: nsImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .cornerRadius(6)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 6)
+                                .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                        )
+                }
+            }
+        }
     }
 
     private var isIdle: Bool {
