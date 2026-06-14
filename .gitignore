@@ -24,5 +24,10 @@ gen_project.py
 .DS_Store
 *.swp
 
+# Xcode user data
+*.xcuserdata
+xcschememanagement.plist
+.vscode/
+
 # App
 *.app
