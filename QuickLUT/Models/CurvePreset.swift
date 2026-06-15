@@ -35,30 +35,75 @@ enum CurvePreset: String, CaseIterable, Codable {
         }
     }
 
-    /// 切换曲线时推荐的配套参数。nil 表示不覆盖用户当前值。
+    /// 切换曲线时的完整配套参数（白平衡/分色 + 基础调整，不含 LUT）。
     struct RecommendedParams {
-        var saturation: Double?
-        var contrast: Double?
-        var brightness: Double?
-        var gamma: Double?
+        var temperature: Double
+        var tint: Double
+        var shadowTemperature: Double
+        var highlightTemperature: Double
+        var saturation: Double
+        var contrast: Double
+        var brightness: Double
+        var gamma: Double
+
+        func apply(to params: ProcessingParams, preCurve: CurvePreset) -> ProcessingParams {
+            var p = params
+            p.preCurve = preCurve
+            p.temperature = temperature
+            p.tint = tint
+            p.shadowTemperature = shadowTemperature
+            p.highlightTemperature = highlightTemperature
+            p.saturation = saturation
+            p.contrast = contrast
+            p.brightness = brightness
+            p.gamma = gamma
+            return p
+        }
     }
 
     var recommendedParams: RecommendedParams {
         switch self {
         case .none:
-            return RecommendedParams()
+            return RecommendedParams(
+                temperature: 0, tint: 0, shadowTemperature: 0, highlightTemperature: 0,
+                saturation: 1.0, contrast: 1.0, brightness: 0.0, gamma: 1.0
+            )
         case .light:
-            return RecommendedParams(saturation: 1.0, contrast: 1.02, brightness: 0.0, gamma: 1.0)
+            return RecommendedParams(
+                temperature: 0.05, tint: 0.05,
+                shadowTemperature: -0.10, highlightTemperature: 0.10,
+                saturation: 1.0, contrast: 1.02, brightness: 0.0, gamma: 1.0
+            )
         case .moderate:
-            return RecommendedParams(saturation: 1.0, contrast: 1.04, brightness: 0.0, gamma: 1.01)
+            return RecommendedParams(
+                temperature: 0.04, tint: 0.08,
+                shadowTemperature: -0.20, highlightTemperature: 0.25,
+                saturation: 1.0, contrast: 1.04, brightness: 0.0, gamma: 1.01
+            )
         case .strong:
-            return RecommendedParams(saturation: 0.95, contrast: 1.08, brightness: 0.0, gamma: 1.02)
+            return RecommendedParams(
+                temperature: 0.04, tint: 0.08,
+                shadowTemperature: -0.25, highlightTemperature: 0.30,
+                saturation: 0.95, contrast: 1.08, brightness: 0.0, gamma: 1.02
+            )
         case .filmLight:
-            return RecommendedParams(saturation: 0.90, contrast: 1.06, brightness: -0.02, gamma: 1.02)
+            return RecommendedParams(
+                temperature: 0.03, tint: 0.08,
+                shadowTemperature: -0.30, highlightTemperature: 0.30,
+                saturation: 0.90, contrast: 1.06, brightness: -0.02, gamma: 1.02
+            )
         case .filmMedium:
-            return RecommendedParams(saturation: 0.85, contrast: 1.10, brightness: -0.03, gamma: 1.04)
+            return RecommendedParams(
+                temperature: 0.04, tint: 0.10,
+                shadowTemperature: -0.40, highlightTemperature: 0.40,
+                saturation: 0.85, contrast: 1.10, brightness: -0.03, gamma: 1.04
+            )
         case .filmStrong:
-            return RecommendedParams(saturation: 0.78, contrast: 1.15, brightness: -0.05, gamma: 1.06)
+            return RecommendedParams(
+                temperature: 0.03, tint: 0.10,
+                shadowTemperature: -0.35, highlightTemperature: 0.35,
+                saturation: 0.78, contrast: 1.15, brightness: -0.05, gamma: 1.06
+            )
         }
     }
 }

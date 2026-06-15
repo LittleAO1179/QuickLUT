@@ -29,5 +29,8 @@ gen_project.py
 xcschememanagement.plist
 .vscode/
 
+# SweetPad / build server
+buildServer.json
+
 # App
 *.app

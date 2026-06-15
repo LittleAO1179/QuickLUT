@@ -12,7 +12,7 @@ final class AppViewModel: ObservableObject {
     @Published var selectedFileURL: URL?
     @Published var outputURL: URL?
     @Published var job = ProcessingJob()
-    @Published var previewImageURL: URL?
+    @Published var previewImage: NSImage?
     @Published var isGeneratingPreview = false
 
     // MARK: - 子组件
@@ -20,19 +20,30 @@ final class AppViewModel: ObservableObject {
     let videoProcessor = VideoProcessor()
     let presetStore = PresetStore()
     private var cancellables = Set<AnyCancellable>()
+    private var previewSeq = 0
+    @Published private(set) var previewToken = UUID()
 
     init() {
-        // 同步 VideoProcessor 的 job 到 AppViewModel
         videoProcessor.$job
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newJob in
                 self?.job = newJob
             }
             .store(in: &cancellables)
-    }
 
-    private var previewDir: URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("QuickLUT/previews", isDirectory: true)
+        $params
+            .dropFirst()
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.requestPreview()
+            }
+            .store(in: &cancellables)
+
+        // 启动时与预设选择器同步（PresetStore 已默认选中第一个）
+        if let id = presetStore.selectedPresetID,
+           let preset = presetStore.presets.first(where: { $0.id == id }) {
+            params = preset.params
+        }
     }
 
     // MARK: - 文件操作
@@ -43,8 +54,24 @@ final class AppViewModel: ObservableObject {
             return
         }
         selectedFileURL = url
-        previewImageURL = nil
+        previewImage = nil
         computeOutputPath(for: url)
+        requestPreview()
+    }
+
+    /// 更新单个参数字段（整体赋值，触发 @Published）。
+    func setParam<T>(_ keyPath: WritableKeyPath<ProcessingParams, T>, _ value: T) {
+        var copy = params
+        copy[keyPath: keyPath] = value
+        params = copy
+    }
+
+    /// Picker 等控件用 Binding。
+    func binding<T>(_ keyPath: WritableKeyPath<ProcessingParams, T>) -> Binding<T> {
+        Binding(
+            get: { self.params[keyPath: keyPath] },
+            set: { self.setParam(keyPath, $0) }
+        )
     }
 
     /// 更新输出路径
@@ -63,28 +90,34 @@ final class AppViewModel: ObservableObject {
 
     // MARK: - 预览
 
-    func generatePreview() {
-        guard let input = selectedFileURL, !isGeneratingPreview else { return }
+    func requestPreview() {
+        guard let input = selectedFileURL else { return }
         guard let lutFileURL = VideoProcessor.resolveLUTFile(named: params.lutFileName) else {
-            previewImageURL = nil
+            previewImage = nil
             return
         }
 
+        previewSeq += 1
+        let seq = previewSeq
+        let snapshot = params
         isGeneratingPreview = true
-        previewImageURL = nil
 
         Task {
             let result = await videoProcessor.generatePreview(
                 inputURL: input,
-                params: params,
-                lutFileURL: lutFileURL,
-                outputDir: previewDir
+                params: snapshot,
+                lutFileURL: lutFileURL
             )
-            await MainActor.run {
-                self.previewImageURL = result
-                self.isGeneratingPreview = false
-            }
+            guard seq == self.previewSeq else { return }
+            self.previewImage = result
+            self.previewToken = UUID()
+            self.isGeneratingPreview = false
         }
+    }
+
+    /// 手动触发预览（供按钮调用，与 requestPreview 相同逻辑）。
+    func generatePreview() {
+        requestPreview()
     }
 
     // MARK: - 编码
@@ -98,11 +131,11 @@ final class AppViewModel: ObservableObject {
             return
         }
 
-        let filterComplex = FilterChainBuilder.build(params: params, lutFilePath: lutFileURL.path)
         videoProcessor.startEncoding(
             inputURL: input,
             outputURL: output,
-            filterComplex: filterComplex
+            params: params,
+            lutFileURL: lutFileURL
         )
     }
 
@@ -125,12 +158,9 @@ final class AppViewModel: ObservableObject {
         presetStore.delete(preset)
     }
 
-    /// 切换曲线时应用推荐的配套参数
-    func applyCurveRecommendedParams(_ curve: CurvePreset) {
-        let rec = curve.recommendedParams
-        if let v = rec.saturation { params.saturation = v }
-        if let v = rec.contrast { params.contrast = v }
-        if let v = rec.brightness { params.brightness = v }
-        if let v = rec.gamma { params.gamma = v }
+    /// 切换曲线：曲线 + 白平衡/分色 + 基础调整，一次写回整套配套参数。
+    func applyCurve(_ curve: CurvePreset) {
+        guard curve != params.preCurve else { return }
+        params = curve.recommendedParams.apply(to: params, preCurve: curve)
     }
 }

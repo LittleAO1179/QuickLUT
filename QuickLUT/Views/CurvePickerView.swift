@@ -8,29 +8,28 @@ struct CurvePickerView: View {
             HStack {
                 Text("曲线")
                     .frame(width: 70, alignment: .leading)
-                Picker("", selection: $viewModel.params.preCurve) {
+                Picker("", selection: Binding(
+                    get: { viewModel.params.preCurve },
+                    set: { viewModel.applyCurve($0) }
+                )) {
                     ForEach(CurvePreset.allCases, id: \.self) { curve in
                         Text(curve.displayName).tag(curve)
                     }
                 }
                 .labelsHidden()
-                .onChange(of: viewModel.params.preCurve) { newCurve in
-                    viewModel.applyCurveRecommendedParams(newCurve)
-                }
             }
 
             HStack {
                 Text("LUT 强度")
                     .frame(width: 70, alignment: .leading)
-                Slider(
-                    value: $viewModel.params.lutStrength,
-                    in: 0...100,
-                    step: 1
+                ParamSliderRow(
+                    label: "",
+                    keyPath: \.lutStrength,
+                    range: 0...100,
+                    step: 1,
+                    format: "%.0f%%",
+                    labelWidth: 0
                 )
-                Text("\(Int(viewModel.params.lutStrength))%")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .frame(width: 36, alignment: .trailing)
             }
         }
     }
