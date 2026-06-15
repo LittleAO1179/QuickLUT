@@ -34,4 +34,31 @@ enum CurvePreset: String, CaseIterable, Codable {
         case .filmStrong: return "0/0.06 0.15/0.22 0.5/0.5 0.85/0.75 1/0.86"
         }
     }
+
+    /// 切换曲线时推荐的配套参数。nil 表示不覆盖用户当前值。
+    struct RecommendedParams {
+        var saturation: Double?
+        var contrast: Double?
+        var brightness: Double?
+        var gamma: Double?
+    }
+
+    var recommendedParams: RecommendedParams {
+        switch self {
+        case .none:
+            return RecommendedParams()
+        case .light:
+            return RecommendedParams(saturation: 1.0, contrast: 1.02, brightness: 0.0, gamma: 1.0)
+        case .moderate:
+            return RecommendedParams(saturation: 1.0, contrast: 1.04, brightness: 0.0, gamma: 1.01)
+        case .strong:
+            return RecommendedParams(saturation: 0.95, contrast: 1.08, brightness: 0.0, gamma: 1.02)
+        case .filmLight:
+            return RecommendedParams(saturation: 0.90, contrast: 1.06, brightness: -0.02, gamma: 1.02)
+        case .filmMedium:
+            return RecommendedParams(saturation: 0.85, contrast: 1.10, brightness: -0.03, gamma: 1.04)
+        case .filmStrong:
+            return RecommendedParams(saturation: 0.78, contrast: 1.15, brightness: -0.05, gamma: 1.06)
+        }
+    }
 }

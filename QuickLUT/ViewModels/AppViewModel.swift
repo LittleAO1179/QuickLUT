@@ -124,4 +124,13 @@ final class AppViewModel: ObservableObject {
     func deletePreset(_ preset: Preset) {
         presetStore.delete(preset)
     }
+
+    /// 切换曲线时应用推荐的配套参数
+    func applyCurveRecommendedParams(_ curve: CurvePreset) {
+        let rec = curve.recommendedParams
+        if let v = rec.saturation { params.saturation = v }
+        if let v = rec.contrast { params.contrast = v }
+        if let v = rec.brightness { params.brightness = v }
+        if let v = rec.gamma { params.gamma = v }
+    }
 }

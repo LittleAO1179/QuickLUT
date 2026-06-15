@@ -14,6 +14,9 @@ struct CurvePickerView: View {
                     }
                 }
                 .labelsHidden()
+                .onChange(of: viewModel.params.preCurve) { newCurve in
+                    viewModel.applyCurveRecommendedParams(newCurve)
+                }
             }
 
             HStack {
