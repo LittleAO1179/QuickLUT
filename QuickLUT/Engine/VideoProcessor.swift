@@ -84,6 +84,7 @@ final class VideoProcessor: ObservableObject {
                 "-i", inputURL.path,
                 "-filter_complex", filterComplex,
                 "-map", "[out]",
+                "-map", "0:a?",
                 "-c:v", "hevc_videotoolbox",
                 "-pix_fmt", "yuv420p10le",
                 "-b:v", "20M", "-maxrate", "25M", "-bufsize", "25M",
