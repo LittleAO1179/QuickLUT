@@ -11,8 +11,7 @@ struct EncodingProgressView: View {
         case .preparing:
             HStack {
                 ProgressView()
-                    .scaleEffect(0.6)
-                    .frame(width: 16, height: 16)
+                    .controlSize(.small)
                 Text("准备中...")
                     .font(.caption)
                 Spacer()

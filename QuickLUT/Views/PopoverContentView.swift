@@ -50,8 +50,7 @@ struct PopoverContentView: View {
                 HStack(spacing: 4) {
                     if viewModel.isGeneratingPreview {
                         ProgressView()
-                            .scaleEffect(0.6)
-                            .frame(width: 12, height: 12)
+                            .controlSize(.small)
                     } else {
                         Image(systemName: "eye")
                             .font(.caption)
@@ -65,17 +64,19 @@ struct PopoverContentView: View {
             .controlSize(.small)
             .disabled(viewModel.isGeneratingPreview)
 
-            if let previewURL = viewModel.previewImageURL {
-                if let nsImage = NSImage(contentsOf: previewURL) {
-                    Image(nsImage: nsImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .cornerRadius(6)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
-                        )
-                }
+            if let previewURL = viewModel.previewImageURL,
+               let nsImage = NSImage(contentsOf: previewURL),
+               let tiff = nsImage.tiffRepresentation,
+               let bitmap = NSBitmapImageRep(data: tiff),
+               let cgImage = bitmap.cgImage {
+                Image(cgImage, scale: 1.0, label: Text("预览"))
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .cornerRadius(6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 6)
+                            .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
+                    )
             }
         }
     }
