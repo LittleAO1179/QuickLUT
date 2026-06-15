@@ -2,14 +2,15 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
-// MARK: - 自定义可拖放的状态栏视图
+// MARK: - 透明的拖放/点击覆盖层
+// 图标由 NSStatusItem.button 渲染（稳定显示），本视图仅覆盖在 button 上方
+// 负责处理拖放与左右键点击。
 
 final class DropStatusBarView: NSView {
     var onClick: (() -> Void)?
     var onRightClick: (() -> Void)?
     var onDropFile: ((URL) -> Void)?
 
-    private let imageView = NSImageView()
     private let highlightLayer = CALayer()
 
     override init(frame: NSRect) {
@@ -25,23 +26,19 @@ final class DropStatusBarView: NSView {
     private func setup() {
         wantsLayer = true
 
-        // 高亮层
-        highlightLayer.frame = bounds
+        // 高亮层（拖放反馈）
         highlightLayer.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(0.3).cgColor
+        highlightLayer.cornerRadius = 4
         highlightLayer.opacity = 0
         layer?.addSublayer(highlightLayer)
 
-        // 图标
-        imageView.image = NSImage(
-            systemSymbolName: "paintpalette.fill",
-            accessibilityDescription: "QuickLUT"
-        )
-        imageView.imageScaling = .scaleProportionallyDown
-        imageView.frame = NSRect(x: 2, y: 2, width: 20, height: 18)
-        addSubview(imageView)
-
         // 注册拖放类型
         registerForDraggedTypes([.fileURL])
+    }
+
+    override func layout() {
+        super.layout()
+        highlightLayer.frame = bounds
     }
 
     override func mouseDown(with event: NSEvent) {
@@ -118,28 +115,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let viewModel = AppViewModel()
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 检查 ffmpeg
-        if !FFmpegLocator.isAvailable() {
-            DispatchQueue.main.async {
-                let alert = NSAlert()
-                alert.messageText = "未找到 ffmpeg"
-                alert.informativeText = "QuickLUT 需要 ffmpeg 才能处理视频。请在终端运行：\nbrew install ffmpeg"
-                alert.alertStyle = .warning
-                alert.addButton(withTitle: "确定")
-                alert.runModal()
-            }
-        }
-
-        // 创建状态栏自定义视图
+        // 创建状态栏图标：图标交给 button 渲染（稳定显示），拖放/点击用覆盖层处理
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        dropView = DropStatusBarView(frame: NSRect(x: 0, y: 0, width: 26, height: 22))
+        let button = statusItem.button!
+        let icon = NSImage(systemSymbolName: "paintpalette.fill", accessibilityDescription: "QuickLUT")
+        icon?.isTemplate = true
+        button.image = icon
+
+        dropView = DropStatusBarView(frame: button.bounds)
+        dropView.autoresizingMask = [.width, .height]
         dropView.onClick = { [weak self] in self?.togglePopover() }
         dropView.onRightClick = { [weak self] in self?.showStatusBarMenu() }
         dropView.onDropFile = { [weak self] url in
             self?.viewModel.selectFile(url)
             self?.showPopover()
         }
-        statusItem.view = dropView
+        button.addSubview(dropView)
 
         // 创建 Popover（applicationDefined 模式：不自动关闭，手动管理）
         popover = NSPopover()
@@ -176,19 +167,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func togglePopover() {
-        guard let view = statusItem.view else { return }
+        guard let button = statusItem.button else { return }
 
         if popover.isShown {
             popover.performClose(nil)
         } else {
-            popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+            popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             popover.contentViewController?.view.window?.makeKey()
         }
     }
 
     private func showPopover() {
-        guard let view = statusItem.view, !popover.isShown else { return }
-        popover.show(relativeTo: view.bounds, of: view, preferredEdge: .minY)
+        guard let button = statusItem.button, !popover.isShown else { return }
+        popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
         popover.contentViewController?.view.window?.makeKey()
     }
 

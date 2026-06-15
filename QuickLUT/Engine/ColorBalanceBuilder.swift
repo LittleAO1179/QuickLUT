@@ -80,4 +80,46 @@ enum ColorBalanceBuilder {
             .map { String(format: "%@=%.3f", $0.key, $0.value) }
             .joined(separator: ":")
     }
+
+    /// 原生管线用：直接返回 colorbalance 偏移量（与 build 字符串同一套映射）
+    static func offsets(
+        temperature: Double,
+        tint: Double,
+        shadowTemp: Double,
+        highlightTemp: Double
+    ) -> ColorBalance.Offsets {
+        var o = ColorBalance.Offsets()
+
+        if temperature > 0 {
+            o.rs += Float(0.20 * temperature); o.rh += Float(0.12 * temperature)
+            o.bs += Float(-0.20 * temperature); o.bh += Float(-0.12 * temperature)
+        } else if temperature < 0 {
+            let s = -temperature
+            o.rs += Float(-0.20 * s); o.rh += Float(-0.12 * s)
+            o.bs += Float(0.20 * s); o.bh += Float(0.12 * s)
+        }
+
+        if tint > 0 {
+            o.gs += Float(-0.30 * tint); o.gh += Float(-0.15 * tint)
+        } else if tint < 0 {
+            let s = -tint
+            o.gs += Float(0.30 * s); o.gh += Float(0.15 * s)
+        }
+
+        if shadowTemp > 0 {
+            o.rs += Float(0.25 * shadowTemp); o.bs += Float(-0.25 * shadowTemp)
+        } else if shadowTemp < 0 {
+            let s = -shadowTemp
+            o.rs += Float(-0.20 * s); o.bs += Float(0.25 * s); o.gs += Float(0.08 * s)
+        }
+
+        if highlightTemp > 0 {
+            o.rh += Float(0.20 * highlightTemp); o.bh += Float(-0.20 * highlightTemp); o.gh += Float(-0.05 * highlightTemp)
+        } else if highlightTemp < 0 {
+            let s = -highlightTemp
+            o.rh += Float(-0.20 * s); o.bh += Float(0.20 * s)
+        }
+
+        return o
+    }
 }

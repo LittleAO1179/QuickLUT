@@ -6,38 +6,10 @@ struct BasicAdjustmentsView: View {
     var body: some View {
         GroupBox(label: Text("基础调整")) {
             VStack(spacing: 6) {
-                HStack {
-                    Text("饱和度")
-                        .frame(width: 50, alignment: .leading)
-                    Slider(value: $viewModel.params.saturation, in: 0.0...2.0, step: 0.01)
-                    Text(String(format: "%.2f", viewModel.params.saturation))
-                        .frame(width: 42, alignment: .trailing)
-                        .font(.caption.monospacedDigit())
-                }
-                HStack {
-                    Text("对比度")
-                        .frame(width: 50, alignment: .leading)
-                    Slider(value: $viewModel.params.contrast, in: 0.0...2.0, step: 0.01)
-                    Text(String(format: "%.2f", viewModel.params.contrast))
-                        .frame(width: 42, alignment: .trailing)
-                        .font(.caption.monospacedDigit())
-                }
-                HStack {
-                    Text("亮度")
-                        .frame(width: 50, alignment: .leading)
-                    Slider(value: $viewModel.params.brightness, in: -1.0...1.0, step: 0.01)
-                    Text(String(format: "%+.2f", viewModel.params.brightness))
-                        .frame(width: 42, alignment: .trailing)
-                        .font(.caption.monospacedDigit())
-                }
-                HStack {
-                    Text("Gamma")
-                        .frame(width: 50, alignment: .leading)
-                    Slider(value: $viewModel.params.gamma, in: 0.0...2.0, step: 0.01)
-                    Text(String(format: "%.2f", viewModel.params.gamma))
-                        .frame(width: 42, alignment: .trailing)
-                        .font(.caption.monospacedDigit())
-                }
+                ParamSliderRow(label: "饱和度", keyPath: \.saturation, range: 0.0...2.0, step: 0.01, format: "%.2f", labelWidth: 50)
+                ParamSliderRow(label: "对比度", keyPath: \.contrast, range: 0.0...2.0, step: 0.01, format: "%.2f", labelWidth: 50)
+                ParamSliderRow(label: "亮度", keyPath: \.brightness, range: -1.0...1.0, step: 0.01, format: "%+.2f", labelWidth: 50)
+                ParamSliderRow(label: "Gamma", keyPath: \.gamma, range: 0.0...2.0, step: 0.01, format: "%.2f", labelWidth: 50)
             }
         }
         .font(.caption)

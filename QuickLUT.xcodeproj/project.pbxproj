@@ -8,10 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		11B53EA8001DAFC851F2C6F0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C55546A954643CE58B2E73; };
+		38C3870545B6CDEF0CD255A5 /* AVColorProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95149BCF94DFD1805DC72252; };
 		B3F45745EC523B279BE26190 /* ColorBalanceBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE6784B27D75070F8C4D33FF; };
-		7417BC0258AEC639BD3A9BA4 /* FFmpegLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C8C177E086FAB373DC416D; };
-		AE421B7063BF7EB09BB7E258 /* FilterChainBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1EA8947F3E34477416D58B7; };
-		487C227BF83D9C993DA00040 /* ProgressParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C240ECA443F4B318CDA35DD6; };
+		BED2A6C63128D72E732BCCF5 /* ColorMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87D88975925DC59C7381A50B; };
+		E85118ACACA64E2930727A9F /* CombinedLUTBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 132081A008D726EB8A77327E; };
+		F105CCD510046139986CFA29 /* CubeLUT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95ADBD34F810A17628EC6FDA; };
 		10AE47C6093F791CA1B17B2A /* VideoProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EBD348E95AD6D6C9AFF0744D; };
 		A4CBC412C5475C8CA314D101 /* CurvePreset.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8CE72406FBEE4008D48D5F9; };
 		A865B69734DA3923662A4719 /* Preset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 602E619EC96A0BC20CB79E39; };
@@ -36,10 +37,11 @@
 
 /* Begin PBXFileReference section */
 		21C55546A954643CE58B2E73 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate.swift"; sourceTree = "<group>"; };
+		95149BCF94DFD1805DC72252 /* AVColorProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVColorProcessor.swift"; sourceTree = "<group>"; };
 		DE6784B27D75070F8C4D33FF /* ColorBalanceBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorBalanceBuilder.swift"; sourceTree = "<group>"; };
-		33C8C177E086FAB373DC416D /* FFmpegLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FFmpegLocator.swift"; sourceTree = "<group>"; };
-		E1EA8947F3E34477416D58B7 /* FilterChainBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FilterChainBuilder.swift"; sourceTree = "<group>"; };
-		C240ECA443F4B318CDA35DD6 /* ProgressParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProgressParser.swift"; sourceTree = "<group>"; };
+		87D88975925DC59C7381A50B /* ColorMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorMath.swift"; sourceTree = "<group>"; };
+		132081A008D726EB8A77327E /* CombinedLUTBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CombinedLUTBuilder.swift"; sourceTree = "<group>"; };
+		95ADBD34F810A17628EC6FDA /* CubeLUT.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CubeLUT.swift"; sourceTree = "<group>"; };
 		EBD348E95AD6D6C9AFF0744D /* VideoProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VideoProcessor.swift"; sourceTree = "<group>"; };
 		D8CE72406FBEE4008D48D5F9 /* CurvePreset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurvePreset.swift"; sourceTree = "<group>"; };
 		602E619EC96A0BC20CB79E39 /* Preset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Preset.swift"; sourceTree = "<group>"; };
@@ -105,10 +107,11 @@
 		AD1943A9FD6D3D7EE1E6AF41 = {
 			isa = PBXGroup;
 			children = (
+				95149BCF94DFD1805DC72252 /* AVColorProcessor.swift */,
 				DE6784B27D75070F8C4D33FF /* ColorBalanceBuilder.swift */,
-				33C8C177E086FAB373DC416D /* FFmpegLocator.swift */,
-				E1EA8947F3E34477416D58B7 /* FilterChainBuilder.swift */,
-				C240ECA443F4B318CDA35DD6 /* ProgressParser.swift */,
+				87D88975925DC59C7381A50B /* ColorMath.swift */,
+				132081A008D726EB8A77327E /* CombinedLUTBuilder.swift */,
+				95ADBD34F810A17628EC6FDA /* CubeLUT.swift */,
 				EBD348E95AD6D6C9AFF0744D /* VideoProcessor.swift */,
 			);
 			path = Engine;
@@ -218,10 +221,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				11B53EA8001DAFC851F2C6F0,
+				38C3870545B6CDEF0CD255A5,
 				B3F45745EC523B279BE26190,
-				7417BC0258AEC639BD3A9BA4,
-				AE421B7063BF7EB09BB7E258,
-				487C227BF83D9C993DA00040,
+				BED2A6C63128D72E732BCCF5,
+				E85118ACACA64E2930727A9F,
+				F105CCD510046139986CFA29,
 				10AE47C6093F791CA1B17B2A,
 				A4CBC412C5475C8CA314D101,
 				A865B69734DA3923662A4719,
@@ -320,7 +324,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.quicklut.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingyang.quicklut;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -343,7 +347,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.quicklut.app;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mingyang.quicklut;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

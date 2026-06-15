@@ -62,16 +62,12 @@ struct PopoverContentView: View {
             }
             .buttonStyle(.bordered)
             .controlSize(.small)
-            .disabled(viewModel.isGeneratingPreview)
 
-            if let previewURL = viewModel.previewImageURL,
-               let nsImage = NSImage(contentsOf: previewURL),
-               let tiff = nsImage.tiffRepresentation,
-               let bitmap = NSBitmapImageRep(data: tiff),
-               let cgImage = bitmap.cgImage {
-                Image(cgImage, scale: 1.0, label: Text("预览"))
+            if let previewImage = viewModel.previewImage {
+                Image(nsImage: previewImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
+                    .id(viewModel.previewToken)
                     .cornerRadius(6)
                     .overlay(
                         RoundedRectangle(cornerRadius: 6)

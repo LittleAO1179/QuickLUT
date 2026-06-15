@@ -13,7 +13,7 @@ struct LUTPickerView: View {
         HStack {
             Text("LUT")
                 .frame(width: 70, alignment: .leading)
-            Picker("", selection: $viewModel.params.lutFileName) {
+            Picker("", selection: viewModel.binding(\.lutFileName)) {
                 ForEach(availableLUTs, id: \.self) { lut in
                     Text(lut.replacingOccurrences(of: ".cube", with: ""))
                         .tag(lut)
