@@ -78,10 +78,9 @@ struct NaturalCubicSpline {
 // MARK: - colorbalance（移植自 ffmpeg vf_colorbalance）
 
 enum ColorBalance {
-    /// 单通道：v 为通道值，shadows/midtones/highlights 为偏移量
-    static func component(_ v: Float, shadows s: Float, midtones m: Float, highlights h: Float) -> Float {
+    /// 单通道：v 为通道值，l 为整像素明度 max(r,g,b)+min(r,g,b)（0..2，三通道共用），与 ffmpeg 一致
+    static func component(_ v: Float, lightness l: Float, shadows s: Float, midtones m: Float, highlights h: Float) -> Float {
         let a: Float = 4, b: Float = 0.333, scale: Float = 0.7
-        let l = v
         let ss = s * simd_clamp((b - l) * a + 0.5, 0, 1) * scale
         let mm = m * simd_clamp((l - b) * a + 0.5, 0, 1) * simd_clamp((1 - l - b) * a + 0.5, 0, 1) * scale
         let hh = h * simd_clamp((l - 1 + b) * a + 0.5, 0, 1) * scale
@@ -99,10 +98,11 @@ enum ColorBalance {
     }
 
     static func apply(_ rgb: SIMD3<Float>, _ o: Offsets) -> SIMD3<Float> {
-        SIMD3(
-            component(rgb.x, shadows: o.rs, midtones: o.rm, highlights: o.rh),
-            component(rgb.y, shadows: o.gs, midtones: o.gm, highlights: o.gh),
-            component(rgb.z, shadows: o.bs, midtones: o.bm, highlights: o.bh)
+        let l = max(rgb.x, max(rgb.y, rgb.z)) + min(rgb.x, min(rgb.y, rgb.z))
+        return SIMD3(
+            component(rgb.x, lightness: l, shadows: o.rs, midtones: o.rm, highlights: o.rh),
+            component(rgb.y, lightness: l, shadows: o.gs, midtones: o.gm, highlights: o.gh),
+            component(rgb.z, lightness: l, shadows: o.bs, midtones: o.bm, highlights: o.bh)
         )
     }
 }
