@@ -134,11 +134,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         // 创建 Popover（applicationDefined 模式：不自动关闭，手动管理）
         popover = NSPopover()
-        popover.contentSize = NSSize(width: 360, height: 560)
         popover.behavior = .applicationDefined
-        popover.contentViewController = NSHostingController(
+        let hosting = NSHostingController(
             rootView: PopoverContentView().environmentObject(viewModel)
         )
+        // 让 popover 高度跟随 SwiftUI 内容（折叠/展开自适应）
+        hosting.sizingOptions = [.preferredContentSize]
+        popover.contentViewController = hosting
 
         // 监听鼠标点击：点击 popover 窗口外部时关闭
         NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in

@@ -22,11 +22,15 @@
 		5FD8ABF49F9FDBB1E116B052 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AE70732F765A7C25A7A8923; };
 		B1AB54F7DB36DC177F93C4A0 /* PresetStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ABFE6620D32B2EE406722E; };
 		1AE24BCAA9E6224A37B0EF60 /* BasicAdjustmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 774F6799AA6B6B37FC2A893F; };
+		C6F2808FD595448C9A2B9CD1 /* CollapsibleSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33EC66EFC18263E6792C5333; };
 		B5C2338517F9E531CD99D025 /* ColorBalanceGroupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7446C4B994BBA2EE0F5F3E; };
 		56220ED766D1BD7590811070 /* CurvePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96762448EC4FA0460CD33113; };
 		B7E9D4AE7FA0B8BC911289BF /* DropZoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 985D127C334692132123E74D; };
+		D46B793BCBC472A9A367BA1C /* EditableValueField.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F3493C5E575622184B0727; };
 		C0787DABE0A0D286F21D0415 /* EncodingProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2A2AE2EC38882BCFB99864F; };
 		5BF49FEF1A4178323922B45B /* LUTPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE6B9797F011DCB845674647; };
+		CDC5F59AEBD6A8109E169E04 /* LabeledSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 214F193AB8C73872A2339C15; };
+		8135C7C94F3F730F316D6F64 /* LayoutMetrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36089C57917175B8EB63E502; };
 		8D49EB33B6A36528705CF3CF /* PopoverContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7ADE413B54910D17F098F78; };
 		C76AB8D0711BB554946DFF80 /* PresetsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DB475736BF8C836D7ABB7A4; };
 		0BAE089D37BA861E0438FAC5 /* BuiltInPresets.json in Resources */ = {isa = PBXBuildFile; fileRef = EB139D82BC2491E151A62BAC; };
@@ -51,11 +55,15 @@
 		2AE70732F765A7C25A7A8923 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppViewModel.swift"; sourceTree = "<group>"; };
 		27ABFE6620D32B2EE406722E /* PresetStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PresetStore.swift"; sourceTree = "<group>"; };
 		774F6799AA6B6B37FC2A893F /* BasicAdjustmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BasicAdjustmentsView.swift"; sourceTree = "<group>"; };
+		33EC66EFC18263E6792C5333 /* CollapsibleSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CollapsibleSection.swift"; sourceTree = "<group>"; };
 		8B7446C4B994BBA2EE0F5F3E /* ColorBalanceGroupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ColorBalanceGroupView.swift"; sourceTree = "<group>"; };
 		96762448EC4FA0460CD33113 /* CurvePickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurvePickerView.swift"; sourceTree = "<group>"; };
 		985D127C334692132123E74D /* DropZoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DropZoneView.swift"; sourceTree = "<group>"; };
+		E1F3493C5E575622184B0727 /* EditableValueField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EditableValueField.swift"; sourceTree = "<group>"; };
 		D2A2AE2EC38882BCFB99864F /* EncodingProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "EncodingProgressView.swift"; sourceTree = "<group>"; };
 		EE6B9797F011DCB845674647 /* LUTPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LUTPickerView.swift"; sourceTree = "<group>"; };
+		214F193AB8C73872A2339C15 /* LabeledSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LabeledSlider.swift"; sourceTree = "<group>"; };
+		36089C57917175B8EB63E502 /* LayoutMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LayoutMetrics.swift"; sourceTree = "<group>"; };
 		D7ADE413B54910D17F098F78 /* PopoverContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PopoverContentView.swift"; sourceTree = "<group>"; };
 		6DB475736BF8C836D7ABB7A4 /* PresetsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PresetsView.swift"; sourceTree = "<group>"; };
 		EB139D82BC2491E151A62BAC /* BuiltInPresets.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "BuiltInPresets.json"; sourceTree = "<group>"; };
@@ -130,11 +138,15 @@
 			isa = PBXGroup;
 			children = (
 				774F6799AA6B6B37FC2A893F /* BasicAdjustmentsView.swift */,
+				33EC66EFC18263E6792C5333 /* CollapsibleSection.swift */,
 				8B7446C4B994BBA2EE0F5F3E /* ColorBalanceGroupView.swift */,
 				96762448EC4FA0460CD33113 /* CurvePickerView.swift */,
 				985D127C334692132123E74D /* DropZoneView.swift */,
+				E1F3493C5E575622184B0727 /* EditableValueField.swift */,
 				D2A2AE2EC38882BCFB99864F /* EncodingProgressView.swift */,
 				EE6B9797F011DCB845674647 /* LUTPickerView.swift */,
+				214F193AB8C73872A2339C15 /* LabeledSlider.swift */,
+				36089C57917175B8EB63E502 /* LayoutMetrics.swift */,
 				D7ADE413B54910D17F098F78 /* PopoverContentView.swift */,
 				6DB475736BF8C836D7ABB7A4 /* PresetsView.swift */,
 			);
@@ -235,11 +247,15 @@
 				5FD8ABF49F9FDBB1E116B052,
 				B1AB54F7DB36DC177F93C4A0,
 				1AE24BCAA9E6224A37B0EF60,
+				C6F2808FD595448C9A2B9CD1,
 				B5C2338517F9E531CD99D025,
 				56220ED766D1BD7590811070,
 				B7E9D4AE7FA0B8BC911289BF,
+				D46B793BCBC472A9A367BA1C,
 				C0787DABE0A0D286F21D0415,
 				5BF49FEF1A4178323922B45B,
+				CDC5F59AEBD6A8109E169E04,
+				8135C7C94F3F730F316D6F64,
 				8D49EB33B6A36528705CF3CF,
 				C76AB8D0711BB554946DFF80,
 			);

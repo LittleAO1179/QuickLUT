@@ -4,33 +4,23 @@ struct CurvePickerView: View {
     @EnvironmentObject var viewModel: AppViewModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
+        VStack(alignment: .leading, spacing: LayoutMetrics.rowSpacing) {
+            HStack(spacing: LayoutMetrics.rowSpacing) {
                 Text("曲线")
-                    .frame(width: 70, alignment: .leading)
-                Picker("", selection: Binding(
-                    get: { viewModel.params.preCurve },
-                    set: { viewModel.applyCurve($0) }
-                )) {
+                    .frame(width: LayoutMetrics.labelWidth, alignment: .leading)
+                Picker("", selection: $viewModel.params.preCurve) {
                     ForEach(CurvePreset.allCases, id: \.self) { curve in
                         Text(curve.displayName).tag(curve)
                     }
                 }
                 .labelsHidden()
+                Spacer()
+                    .frame(width: LayoutMetrics.valueWidth)
             }
 
-            HStack {
-                Text("LUT 强度")
-                    .frame(width: 70, alignment: .leading)
-                ParamSliderRow(
-                    label: "",
-                    keyPath: \.lutStrength,
-                    range: 0...100,
-                    step: 1,
-                    format: "%.0f%%",
-                    labelWidth: 0
-                )
-            }
+            LabeledSlider(label: "LUT 强度", value: $viewModel.params.lutStrength,
+                          range: 0...100, step: 1, isPercent: true, defaultValue: 92,
+                          trackGradient: LinearGradient(colors: [Color.blue.opacity(0.3), .blue], startPoint: .leading, endPoint: .trailing))
         }
     }
 }
