@@ -10,9 +10,9 @@ struct LUTPickerView: View {
     ]
 
     var body: some View {
-        HStack {
+        HStack(spacing: LayoutMetrics.rowSpacing) {
             Text("LUT")
-                .frame(width: 70, alignment: .leading)
+                .frame(width: LayoutMetrics.labelWidth, alignment: .leading)
             Picker("", selection: $viewModel.params.lutFileName) {
                 ForEach(availableLUTs, id: \.self) { lut in
                     Text(lut.replacingOccurrences(of: ".cube", with: ""))
@@ -20,6 +20,8 @@ struct LUTPickerView: View {
                 }
             }
             .labelsHidden()
+            Spacer()
+                .frame(width: LayoutMetrics.valueWidth)
         }
     }
 }

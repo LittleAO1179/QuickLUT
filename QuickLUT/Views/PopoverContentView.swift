@@ -4,41 +4,39 @@ struct PopoverContentView: View {
     @EnvironmentObject var viewModel: AppViewModel
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                PresetsView()
-                Divider()
-                DropZoneView()
-                LUTPickerView()
-                CurvePickerView()
-                ColorBalanceGroupView()
-                BasicAdjustmentsView()
+        VStack(spacing: LayoutMetrics.sectionSpacing) {
+            PresetsView()
+            Divider()
+            DropZoneView()
+            LUTPickerView()
+            CurvePickerView()
+            ColorBalanceGroupView()
+            BasicAdjustmentsView()
 
-                // 预览按钮 + 预览图
-                if viewModel.selectedFileURL != nil {
-                    previewSection
-                }
-
-                // 编码状态
-                if !isIdle {
-                    EncodingProgressView()
-                }
-
-                // 开始编码按钮
-                if isIdle || isTerminalState {
-                    Button(action: viewModel.startEncoding) {
-                        Text("开始编码")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .disabled(viewModel.selectedFileURL == nil)
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.small)
-                }
+            // 预览按钮 + 预览图
+            if viewModel.selectedFileURL != nil {
+                previewSection
             }
-            .padding()
+
+            // 编码状态
+            if !isIdle {
+                EncodingProgressView()
+            }
+
+            // 开始编码按钮
+            if isIdle || isTerminalState {
+                Button(action: viewModel.startEncoding) {
+                    Text("开始编码")
+                        .frame(maxWidth: .infinity)
+                }
+                .disabled(viewModel.selectedFileURL == nil)
+                .buttonStyle(.borderedProminent)
+                .controlSize(.small)
+            }
         }
-        .frame(width: 360)
-        .frame(minHeight: 400, maxHeight: 600)
+        .padding()
+        .frame(width: LayoutMetrics.contentWidth)
+        .fixedSize(horizontal: false, vertical: true)
         .environmentObject(viewModel)
     }
 
