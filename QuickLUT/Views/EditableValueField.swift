@@ -21,8 +21,9 @@ struct EditableValueField: View {
                     .multilineTextAlignment(.trailing)
                     .focused($focused)
                     .onSubmit(commit)
-                    .onChange(of: focused) { _, isFocused in
-                        if !isFocused { commit() }
+                    .onChange(of: focused) { isFocusChanged in
+                        // 单参数 onChange：兼容 macOS 13（双参数版本为 14+ 专属）
+                        if !isFocusChanged { commit() }
                     }
                     .onAppear { focused = true }
             } else {
