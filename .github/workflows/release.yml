@@ -1,0 +1,46 @@
+name: Release
+
+# 在 main 分支上打 v* 开头的 tag 时触发：自动构建 Universal DMG 并发布 GitHub Release。
+# 发布主干为 main；在 develop / feature 分支打的 tag 会被下面的校验步骤拦截。
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write   # 发布 Release / 上传资源需要写权限
+
+jobs:
+  build-and-release:
+    name: Build Universal DMG & Publish Release
+    runs-on: macos-14   # Apple Silicon runner，可交叉编译 x86_64，产出 universal 二进制
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # 完整历史，用于校验 tag 是否在 main 分支上
+
+      - name: Verify tag is on main branch
+        run: |
+          set -euo pipefail
+          TAG_SHA="$(git rev-parse '${{ github.ref_name }}^{commit}')"
+          git fetch origin main
+          if git merge-base --is-ancestor "$TAG_SHA" origin/main; then
+            echo "✓ Tag ${{ github.ref_name }} 在 main 分支上"
+          else
+            echo "::error::Tag ${{ github.ref_name }} 不在 main 分支上。请先切到 main 再打 release tag。"
+            exit 1
+          fi
+
+      - name: Build Universal DMG
+        run: |
+          chmod +x build_release.sh
+          ./build_release.sh "${{ github.ref_name }}"   # 用 tag 名（如 v1.0.0）作为版本号
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/dist/*.dmg
+          name: ${{ github.ref_name }}
+          generate_release_notes: true   # 自动从上一次 release 以来的 commits 生成更新日志
